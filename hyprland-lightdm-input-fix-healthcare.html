@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hyprland from LightDM: keyboard and mouse completely frozen</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Literata:ital,wght@0,400;0,600;1,400&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  :root {
+    --bg: #0f0f13;
+    --bg-secondary: #1a1a22;
+    --border: rgba(255,255,255,0.1);
+    --border-strong: rgba(255,255,255,0.18);
+    --text-primary: #e8e6f0;
+    --text-secondary: #8b8a96;
+    --accent: #33ccff;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: 'Literata', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.75;
+    margin: 0;
+    padding: 0;
+  }
+
+  .page {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 4rem 2rem 6rem;
+  }
+
+  .kicker {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin: 0 0 0.75rem;
+  }
+
+  h1 {
+    font-size: 34px;
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0 0 1rem;
+    letter-spacing: -0.5px;
+    color: var(--text-primary);
+  }
+
+  .subtitle {
+    font-size: 18px;
+    font-style: italic;
+    color: var(--text-secondary);
+    margin: 0 0 1.5rem;
+    line-height: 1.5;
+  }
+
+  .meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .meta span::before { content: '— '; }
+
+  .divider {
+    height: 0.5px;
+    background: var(--border);
+    margin: 2rem 0;
+  }
+
+  h2 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin: 2.5rem 0 0.75rem;
+    font-weight: 500;
+  }
+
+  p { margin: 0 0 1.25rem; }
+
+  pre {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    background: var(--bg-secondary);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 0.85rem 1rem;
+    margin: 0.75rem 0 1.25rem;
+    overflow-x: auto;
+    line-height: 1.6;
+    color: var(--text-primary);
+  }
+
+  code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    background: var(--bg-secondary);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+
+  pre code {
+    background: none;
+    padding: 0;
+    color: var(--text-primary);
+    font-size: inherit;
+  }
+
+  .callout {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.25rem;
+    margin: 1.75rem 0;
+    border: 0.5px solid var(--border);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .callout-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    margin: 0 0 0.5rem;
+    font-weight: 500;
+  }
+
+  .callout p { margin: 0; }
+
+  .step {
+    display: flex;
+    gap: 1rem;
+    margin: 1.25rem 0;
+    align-items: flex-start;
+  }
+
+  .step-arrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--text-secondary);
+    min-width: 20px;
+    padding-top: 3px;
+  }
+
+  .step-body { flex: 1; }
+  .step-body p { margin: 0 0 0.5rem; }
+
+  .result {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-top: -0.5rem !important;
+  }
+
+  .verdict {
+    border-left: 2px solid var(--border-strong);
+    padding: 0.25rem 0 0.25rem 1.25rem;
+    margin: 2rem 0;
+  }
+
+  .verdict p {
+    margin: 0 0 0.5rem;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--text-secondary);
+  }
+
+  .verdict p:last-child { margin: 0; }
+
+  strong { font-weight: 600; color: var(--text-primary); }
+  em { font-style: italic; }
+
+  @media (max-width: 600px) {
+    .page { padding: 2.5rem 1.25rem 4rem; }
+    h1 { font-size: 26px; }
+    .meta { gap: 0.75rem; flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <p class="kicker">Debugging / Hyprland / Wayland</p>
+  <h1>Hyprland from LightDM: keyboard and mouse completely frozen</h1>
+  <p class="subtitle">Vital signs are stable, the patient looks fine — but they're completely unresponsive. A diagnostic walkthrough for when your Wayland session starts but accepts no input.</p>
+  <div class="meta">
+    <span>EndeavourOS / Arch-based</span>
+    <span>Hyprland 0.55+</span>
+    <span>LightDM + slick-greeter</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>Presentation</h2>
+
+  <p>The patient — your Hyprland session — presents with a striking dissociation: <em>motor function is intact but sensory input has completely failed.</em> The wallpaper renders, Waybar is running, window decorations appear normal. Vitals look stable. And yet the keyboard and mouse are entirely unresponsive. No cursor movement. No reaction to keypresses. The session cannot be exited gracefully; a hard reset is the only option.</p>
+
+  <p>Critically, the system reports no obvious errors. Hyprland believes it started successfully. This is what makes the case deceptive — it looks like a healthy patient.</p>
+
+  <h2>Differential diagnosis</h2>
+
+  <p>The presenting symptoms — a process that is running but cannot receive input — suggest a problem with access to input devices at the system level. Two interventions appear indicated and are likely to be attempted first:</p>
+
+  <div class="step">
+    <span class="step-arrow">→</span>
+    <div class="step-body">
+      <p><strong>Intervention 1:</strong> Grant the user direct access to raw input devices via the <code>input</code> group — analogous to expanding a patient's care team permissions:</p>
+      <pre><code>sudo usermod -aG input $USER</code></pre>
+      <p class="result">No effect. Symptoms unchanged.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <span class="step-arrow">→</span>
+    <div class="step-body">
+      <p><strong>Intervention 2:</strong> Enable <code>seatd</code>, an alternative seat management service, and add the user to the <code>seat</code> group — a more aggressive escalation of device access privileges:</p>
+      <pre><code>sudo systemctl enable --now seatd
+sudo usermod -aG seat $USER</code></pre>
+      <p class="result">Contraindicated. Condition deteriorates — the display stops loading entirely. Discontinue immediately and reverse:</p>
+      <pre><code>sudo systemctl disable --now seatd</code></pre>
+    </div>
+  </div>
+
+  <p>Both interventions target the wrong system. This is a classic diagnostic trap: treating the <em>apparent</em> site of dysfunction rather than the underlying cause. The input devices themselves are not the problem.</p>
+
+  <h2>Localisation test</h2>
+
+  <p>Before ordering further investigations, perform a localisation test to identify where in the chain the failure actually occurs. At the LightDM login screen, bypass the display manager entirely by switching to a TTY — think of this as removing one layer of the care pathway and assessing the patient directly:</p>
+
+  <pre><code>Ctrl+Alt+F2        # switch to TTY
+start-hyprland     # launch compositor directly</code></pre>
+
+  <p>If the session works perfectly from the TTY — keyboard, mouse, display all functional — the underlying hardware and kernel-level permissions are healthy. The lesion is not in the patient. It is in the <em>referral pathway</em>: specifically, in how LightDM is handing the session off.</p>
+
+  <h2>Aetiology</h2>
+
+  <p>LightDM was designed in the X11 era and applies a legacy session wrapper script to every session it launches, regardless of type:</p>
+
+  <pre><code>session-wrapper=/etc/lightdm/Xsession</code></pre>
+
+  <p>This wrapper prepares an X11 environment and, crucially, sets <code>XDG_SESSION_TYPE=x11</code> before passing control to the child process. Hyprland inherits this miscoded referral and behaves accordingly — it identifies itself to logind as an X11 session.</p>
+
+  <p>This is where input breaks down. Logind manages access to input devices and uses session type as a key part of that handoff. An X11 session type tells logind to expect an X server to manage input; logind will not hand device access to a Wayland compositor that has identified itself as X11. The compositor is running, but it has been administratively locked out of the input device queue — not because of missing permissions, but because it arrived under the wrong credentials.</p>
+
+  <p>Display output is unaffected because the GPU handoff pathway does not go through the same logind mechanism — which is why the visual presentation looks normal while input is completely absent.</p>
+
+  <h2>Treatment</h2>
+
+  <p>Install <code>uwsm</code> (Universal Wayland Session Manager):</p>
+
+  <pre><code>sudo pacman -S uwsm</code></pre>
+
+  <p>UWSM acts as a correctly-credentialed referring agent. It sets <code>XDG_SESSION_TYPE=wayland</code>, initialises the appropriate D-Bus and systemd user session environment, and ensures the compositor is presented to logind under the correct session type — so the input device handoff proceeds normally.</p>
+
+  <p>Once installed, a corrected session entry — <strong>Hyprland (uwsm-managed)</strong> — appears in the LightDM session menu. Select it. On next login, the patient will be fully responsive.</p>
+
+  <div class="callout">
+    <p class="callout-label">Why the entry already existed but didn't work</p>
+    <p>Hyprland ships a <code>hyprland-uwsm.desktop</code> session file alongside its standard <code>hyprland.desktop</code>. The uwsm-managed option was already visible in the LightDM session list — the referral pathway existed on paper — but the service it pointed to (<code>uwsm</code>) wasn't installed. A listed treatment that hasn't been stocked in the pharmacy. Installing the package activates it.</p>
+  </div>
+
+  <h2>Affected populations</h2>
+
+  <p>This presentation occurs in any configuration where a Wayland compositor is referred through LightDM without a Wayland-aware session wrapper. It is not specific to Hyprland, nor to slick-greeter — the Xsession wrapper is a LightDM behaviour that affects all compositors launched through it the same way.</p>
+
+  <p>Patients managed through GDM are not affected. GDM has native Wayland session support and handles the environment handoff correctly without intervention.</p>
+
+  <h2>Prophylaxis</h2>
+
+  <p>Include <code>uwsm</code> in the initial install to prevent the condition from presenting at all:</p>
+
+  <pre><code>sudo pacman -S hyprland waybar wofi kitty dunst \
+  xdg-desktop-portal-hyprland xdg-desktop-portal-gtk \
+  polkit-gnome pipewire pipewire-alsa pipewire-pulse wireplumber \
+  qt5-wayland qt6-wayland hyprpaper grim slurp \
+  ttf-jetbrains-mono uwsm hyprlock hypridle</code></pre>
+
+  <div class="divider"></div>
+
+  <div class="verdict">
+    <p>The deceptive feature of this case is that the patient <em>looks</em> well — the session loaded, the compositor is running, no error has been raised. The TTY localisation test is the critical step: it confirms that hardware and kernel permissions are intact and shifts the diagnosis upstream to the referral pathway. Once the fault is correctly localised to LightDM's Xsession wrapper, the treatment is straightforward. Install uwsm, select the uwsm-managed session, discharge.</p>
+  </div>
+
+</div>
+</body>
+</html>
