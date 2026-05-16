@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hyprland from LightDM: keyboard and mouse completely frozen</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Literata:ital,wght@0,400;0,600;1,400&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  :root {
+    --bg: #0f0f13;
+    --bg-secondary: #1a1a22;
+    --border: rgba(255,255,255,0.1);
+    --border-strong: rgba(255,255,255,0.18);
+    --text-primary: #e8e6f0;
+    --text-secondary: #8b8a96;
+    --accent: #33ccff;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: 'Literata', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.75;
+    margin: 0;
+    padding: 0;
+  }
+
+  .page {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 4rem 2rem 6rem;
+  }
+
+  .kicker {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin: 0 0 0.75rem;
+  }
+
+  h1 {
+    font-size: 34px;
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0 0 1rem;
+    letter-spacing: -0.5px;
+    color: var(--text-primary);
+  }
+
+  .subtitle {
+    font-size: 18px;
+    font-style: italic;
+    color: var(--text-secondary);
+    margin: 0 0 1.5rem;
+    line-height: 1.5;
+  }
+
+  .meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .meta span::before { content: '— '; }
+
+  .divider {
+    height: 0.5px;
+    background: var(--border);
+    margin: 2rem 0;
+  }
+
+  h2 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin: 2.5rem 0 0.75rem;
+    font-weight: 500;
+  }
+
+  p { margin: 0 0 1.25rem; }
+
+  pre {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    background: var(--bg-secondary);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 0.85rem 1rem;
+    margin: 0.75rem 0 1.25rem;
+    overflow-x: auto;
+    line-height: 1.6;
+    color: var(--text-primary);
+  }
+
+  code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    background: var(--bg-secondary);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+
+  pre code {
+    background: none;
+    padding: 0;
+    color: var(--text-primary);
+    font-size: inherit;
+  }
+
+  .callout {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.25rem;
+    margin: 1.75rem 0;
+    border: 0.5px solid var(--border);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .callout-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    margin: 0 0 0.5rem;
+    font-weight: 500;
+  }
+
+  .callout p { margin: 0; }
+
+  .step {
+    display: flex;
+    gap: 1rem;
+    margin: 1.25rem 0;
+    align-items: flex-start;
+  }
+
+  .step-arrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--text-secondary);
+    min-width: 20px;
+    padding-top: 3px;
+  }
+
+  .step-body { flex: 1; }
+  .step-body p { margin: 0 0 0.5rem; }
+
+  .result {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-top: -0.5rem !important;
+  }
+
+  .verdict {
+    border-left: 2px solid var(--border-strong);
+    padding: 0.25rem 0 0.25rem 1.25rem;
+    margin: 2rem 0;
+  }
+
+  .verdict p {
+    margin: 0 0 0.5rem;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--text-secondary);
+  }
+
+  .verdict p:last-child { margin: 0; }
+
+  strong { font-weight: 600; color: var(--text-primary); }
+
+  @media (max-width: 600px) {
+    .page { padding: 2.5rem 1.25rem 4rem; }
+    h1 { font-size: 26px; }
+    .meta { gap: 0.75rem; flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <p class="kicker">Debugging / Hyprland / Wayland</p>
+  <h1>Hyprland from LightDM: keyboard and mouse completely frozen</h1>
+  <p class="subtitle">Display renders, session loads, compositor is running — but nothing responds. Here's why, and how to fix it without touching seat permissions.</p>
+  <div class="meta">
+    <span>EndeavourOS / Arch-based</span>
+    <span>Hyprland 0.55+</span>
+    <span>LightDM + slick-greeter</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>Symptoms</h2>
+
+  <p>After installing Hyprland and selecting it from the LightDM session menu, the compositor loads successfully: the wallpaper appears, Waybar renders, window decorations look correct. But the keyboard and mouse are completely unresponsive. No cursor movement. No keypress acknowledgment. The only exit is a hard reset.</p>
+
+  <p>Notably, there are no obvious error messages — Hyprland appears to have started correctly, which makes this especially frustrating to diagnose.</p>
+
+  <h2>Dead ends worth skipping</h2>
+
+  <p>The symptoms point toward an input device permissions problem, so the natural first attempts are:</p>
+
+  <div class="step">
+    <span class="step-arrow">→</span>
+    <div class="step-body">
+      <p>Adding the user to the <code>input</code> group:</p>
+      <pre><code>sudo usermod -aG input $USER</code></pre>
+      <p class="result">No effect.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <span class="step-arrow">→</span>
+    <div class="step-body">
+      <p>Enabling <code>seatd</code> and adding to the <code>seat</code> group:</p>
+      <pre><code>sudo systemctl enable --now seatd
+sudo usermod -aG seat $USER</code></pre>
+      <p class="result">Made things worse — the display stopped loading entirely while the mouse cursor briefly flashed. Revert before continuing:</p>
+      <pre><code>sudo systemctl disable --now seatd</code></pre>
+    </div>
+  </div>
+
+  <p>Both are wrong tracks. The problem isn't seat or input group membership.</p>
+
+  <h2>The diagnostic that matters</h2>
+
+  <p>Before spending more time on config, run this test: at the LightDM login screen, switch to a TTY with <code>Ctrl+Alt+F2</code> and launch Hyprland directly:</p>
+
+  <pre><code>start-hyprland</code></pre>
+
+  <p>If keyboard and mouse work perfectly from the TTY — display, input, everything — then the system-level hardware and permissions are fine. The problem is specific to how LightDM is handing off the session. That's the key insight.</p>
+
+  <h2>Root cause</h2>
+
+  <p>LightDM applies a session wrapper script to all session types, configured via:</p>
+
+  <pre><code>session-wrapper=/etc/lightdm/Xsession</code></pre>
+
+  <p>This wrapper was written for X11 and sets up an X11 environment before launching the child process — including exporting <code>XDG_SESSION_TYPE=x11</code>. Hyprland inherits this environment variable and, seeing an X11 session type, cannot properly claim input devices from logind. Logind's input device handoff is session-type-aware; an X11 session type means it expects an X server to manage input, not a Wayland compositor.</p>
+
+  <p>The result is a compositor that renders correctly (display output doesn't go through logind in the same way) but has no access to keyboard or mouse events.</p>
+
+  <h2>Fix</h2>
+
+  <p>Install <code>uwsm</code> (Universal Wayland Session Manager):</p>
+
+  <pre><code>sudo pacman -S uwsm</code></pre>
+
+  <p>UWSM is designed specifically to handle the environment setup for Wayland compositors launched from display managers. It correctly sets <code>XDG_SESSION_TYPE=wayland</code>, initializes the appropriate D-Bus and systemd user session environment, and bypasses the Xsession wrapper.</p>
+
+  <p>Once installed, a new entry — <strong>Hyprland (uwsm-managed)</strong> — appears in the LightDM session selection menu alongside the standard Hyprland entry. Select that one. Keyboard and mouse will work on the next login.</p>
+
+  <div class="callout">
+    <p class="callout-label">Why the standard Hyprland entry still exists</p>
+    <p>Hyprland ships a <code>hyprland-uwsm.desktop</code> session file alongside its standard <code>hyprland.desktop</code>. The uwsm-managed entry was already present in the session list — it just didn't work until the <code>uwsm</code> package was actually installed. If you installed Hyprland via <code>pacman -S hyprland</code> and didn't explicitly install uwsm, the entry is there but silently broken.</p>
+  </div>
+
+  <h2>Affected configurations</h2>
+
+  <p>This issue affects any setup where a Wayland compositor is launched through LightDM without a Wayland-aware session wrapper. It's not specific to Hyprland — other compositors launched through LightDM the same way would exhibit the same problem. It's also not specific to slick-greeter; the wrapper script is a LightDM behavior, not a greeter behavior.</p>
+
+  <p>If you're on a display manager with native Wayland session support (GDM, for example), this doesn't apply — GDM handles Wayland session environment setup correctly by default.</p>
+
+  <h2>Full install command for reference</h2>
+
+  <p>The complete initial package install, including uwsm from the start:</p>
+
+  <pre><code>sudo pacman -S hyprland waybar wofi kitty dunst \
+  xdg-desktop-portal-hyprland xdg-desktop-portal-gtk \
+  polkit-gnome pipewire pipewire-alsa pipewire-pulse wireplumber \
+  qt5-wayland qt6-wayland hyprpaper grim slurp \
+  ttf-jetbrains-mono uwsm hyprlock hypridle</code></pre>
+
+  <p>Adding <code>uwsm</code> here from the start avoids the issue entirely.</p>
+
+  <div class="divider"></div>
+
+  <div class="verdict">
+    <p>The misleading part of this bug is that everything <em>looks</em> like it worked — the compositor loaded, the session is running. The TTY test is the fastest way to isolate whether you're dealing with a hardware/permissions issue or a session environment issue. If TTY works and LightDM doesn't, it's the wrapper. Install uwsm, select the uwsm-managed session, done.</p>
+  </div>
+
+</div>
+</body>
+</html>
